@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para la persona más especial</title>
+    <title>Para Noelia</title>
     <style>
         /* --- ESTILOS CSS --- */
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
@@ -22,18 +22,16 @@
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
-            padding: 20px;
+            padding: 15px;
         }
 
         .container {
             background: rgba(255, 255, 255, 0.95);
-            padding: 40px 30px;
+            padding: 30px 20px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 600px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            max-width: 500px;
             width: 100%;
-            transition: all 0.5s ease;
             position: relative;
             z-index: 10;
         }
@@ -41,15 +39,19 @@
         h1 {
             font-family: 'Dancing Script', cursive;
             color: #ff4d6d;
-            font-size: 3.5rem;
+            font-size: 2.8rem;
+            text-align: center;
             margin-bottom: 20px;
         }
 
-        .intro-text {
-            color: #555;
-            font-size: 1.1rem;
+        .carta-texto {
+            color: #444;
+            font-size: 1rem;
             line-height: 1.6;
-            margin-bottom: 30px;
+        }
+
+        .carta-texto p {
+            margin-bottom: 15px;
         }
 
         .highlight {
@@ -57,70 +59,73 @@
             color: #ff4d6d;
         }
 
+        .pregunta-seccion {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px dashed #ffb3ba;
+            text-align: center;
+        }
+
+        .pregunta-seccion h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
         .btn-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-            position: relative;
-            height: 60px;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            min-height: 60px;
         }
 
         button {
-            padding: 12px 35px;
+            padding: 12px 30px;
             font-size: 1.1rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
-            transition: transform 0.2s, background-color 0.3s;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent; /* Elimina el flash azul en móviles */
         }
 
         #btn-si {
             background-color: #ff4d6d;
             color: white;
-            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
-        }
-
-        #btn-si:hover {
-            transform: scale(1.1);
-            background-color: #ff758f;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
         }
 
         #btn-no {
             background-color: #6c757d;
             color: white;
-            position: absolute;
+            opacity: 0.8;
         }
 
-        /* Carta oculta que aparecerá después */
-        .carta {
+        /* Pantalla de éxito final */
+        .exito-pantalla {
             display: none;
-            opacity: 0;
-            transition: opacity 1s ease;
-            text-align: left;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px dashed #ffb3ba;
+            text-align: center;
+            padding: 40px 10px;
         }
 
-        .carta p {
-            margin-bottom: 15px;
-            color: #444;
-            line-height: 1.7;
+        .exito-pantalla h1 {
+            font-size: 3.5rem;
+            animation: latido 1.2s infinite;
         }
 
-        .firma {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2rem;
-            color: #ff4d6d;
-            text-align: right;
-            margin-top: 20px;
+        @keyframes latido {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
-        /* Animación de corazones cayendo */
+        /* Animación de corazones flotantes */
         .corazon {
-            position: absolute;
+            position: fixed;
             color: #ff4d6d;
             font-size: 24px;
             animation: caida linear forwards;
@@ -131,11 +136,11 @@
 
         @keyframes caida {
             0% {
-                transform: translateY(-10vh) rotate(0deg);
+                transform: translateY(105vh) rotate(0deg);
                 opacity: 1;
             }
             100% {
-                transform: translateY(110vh) rotate(360deg);
+                transform: translateY(-10vh) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -143,86 +148,81 @@
 </head>
 <body>
 
-    <div class="container" id="main-card">
-        <div id="contenido-inicial">
+    <div class="container">
+        <div id="bloque-principal">
             <h1>Hola, Noelia</h1>
-            <p class="intro-text">
-                Estas últimas semanas no hemos parado de hablar y, casi sin darme cuenta, te has convertido en alguien increíblemente importante para mí. Tengo algo que decirte de corazón...
-            </p>
-            <h2 style="color: #ff758f; margin-bottom: 25px;">¿Quieres ser mi novia?</h2>
             
-            <div class="btn-container">
-                <button id="btn-si" onclick="aceptar()">¡Sí! ❤️</button>
-                <button id="btn-no" onmouseover="moverBotonNo()" onclick="moverBotonNo()">No</button>
+            <div class="carta-texto">
+                <p>Tengo que contarte una cosa...</p>
+                <p>Sé que a veces puedo parecer un poco reservado o tímido. La verdad es que <span class="highlight">soy bastante nuevo en esto</span> y, como bien sabes, es la primerísima vez que me abro de esta manera y doy un paso así por alguien.</p>
+                <p>Estas semanas a tu lado han sido un descubrimiento constante. He conocido a una persona maravillosa, con la que me he dado cuenta de que <span class="highlight">tenemos muchísimas cosas en común</span>; algo que, sinceramente, pensaba que nunca iba a encontrar en nadie. Me siento increíblemente a gusto y seguro cuando hablo contigo.</p>
+                <p>No te imaginas las noches que me paso dando vueltas en la cama, <span class="highlight">costándome dormir pensando en qué se hará en el mañana</span> y en todo lo que está por venir. Quiero compartir mucho más tiempo contigo, seguir descubriendo tus inquietudes, tus ilusiones y todo lo que te hace ser tan especial.</p>
+                <p>Por eso... Estas últimas semanas no hemos parado de hablar y, casi sin darme cuenta, te has convertido en alguien increíblemente importante para mí. Tengo algo que decirte de corazón...</p>
+            </div>
+
+            <div class="pregunta-seccion">
+                <h2>¿Quieres ser mi novia?</h2>
+                <div class="btn-container">
+                    <button id="btn-si" onclick="aceptar()">¡Sí! ❤️</button>
+                    <button id="btn-no" onclick="achicarNo()">No</button>
+                </div>
             </div>
         </div>
 
-        <div class="carta" id="carta-sincera">
-            <h1>¡Gracias! RT ❤️</h1>
-            <p><strong>Noelia</strong>,</p>
-            <p>Sé que a veces puedo parecer un poco reservado o tímido. La verdad es que <span class="highlight">soy bastante nuevo en esto</span> y, como bien sabes, es la primerísima vez que me abro de esta manera y doy un paso así por alguien.</p>
-            <p>Estas semanas a tu lado han sido un descubrimiento constante. He conocido a una persona maravillosa, con la que me he dado cuenta de que <span class="highlight">tenemos muchísimas cosas en común</span>; algo que, sinceramente, pensaba que nunca iba a encontrar en nadie. Me siento increíblemente a gusto y seguro cuando hablo contigo.</p>
-            <p>No te imaginas las noches que me paso dando vueltas en la cama, <span class="highlight">costándome dormir pensando en qué se hará en el mañana</span> y en todo lo que está por venir. Quiero compartir mucho más tiempo contigo, seguir descubriendo tus inquietudes, tus ilusiones y todo lo que te hace ser como eres.</p>
-            <p>Gracias por aparecer y por ser tú.</p>
-            <p class="firma">Con todo mi cariño...</p>
+        <div id="bloque-exito" class="exito-pantalla">
+            <h1>¡SÍ! ❤️</h1>
+            <p style="font-size: 1.2rem; color: #555; margin-top: 15px;">Me haces la persona más feliz del mundo.</p>
+            <p style="font-size: 1rem; color: #777; margin-top: 10px;">¡Gracias por decir que sí!</p>
         </div>
     </div>
 
     <script>
-        // Función para mover el botón "No" cuando intente clickearlo (juego divertido)
-        function moverBotonNo() {
+        let escalaSi = 1;
+        let escalaNo = 1;
+
+        // Función por si pulsa el "No" en el móvil
+        function achicarNo() {
+            const btnSi = document.getElementById('btn-si');
             const btnNo = document.getElementById('btn-no');
-            const container = document.getElementById('main-card');
             
-            // Límites para que no se salga de la tarjeta
-            const padding = 20;
-            const xMax = container.clientWidth - btnNo.clientWidth - padding;
-            const yMax = container.clientHeight - btnNo.clientHeight - padding;
+            // El "Sí" se hace más grande y el "No" más pequeño
+            escalaSi += 0.2;
+            escalaNo -= 0.15;
             
-            // Generar posiciones aleatorias
-            const randomX = Math.floor(Math.random() * xMax);
-            const randomY = Math.floor(Math.random() * yMax);
+            btnSi.style.transform = `scale(${escalaSi})`;
+            btnNo.style.transform = `scale(${escalaNo})`;
             
-            // Aplicar nuevas coordenadas dentro de la tarjeta
-            btnNo.style.left = randomX + 'px';
-            btnNo.style.top = randomY + 'px';
+            if (escalaNo <= 0.4) {
+                btnNo.style.display = 'none'; // Si insiste mucho, desaparece
+            }
         }
 
-        // Función que se activa al decir que SÍ
+        // Función que se activa al presionar SÍ
         function aceptar() {
-            // Ocultar el contenido de la pregunta de forma fluida
-            document.getElementById('contenido-inicial').style.display = 'none';
+            // Ocultamos la carta y la pregunta
+            document.getElementById('bloque-principal').style.display = 'none';
             
-            // Mostrar la carta con tus palabras reales
-            const carta = document.getElementById('carta-sincera');
-            carta.style.display = 'block';
-            setTimeout(() => {
-                carta.style.opacity = '1';
-            }, 100);
+            // Mostramos el mensaje final feliz
+            document.getElementById('bloque-exito').style.display = 'block';
 
-            // Lanzar la lluvia de corazones continuos
-            setInterval(crearCorazon, 300);
+            // Iniciamos la lluvia de corazones desde abajo hacia arriba (efecto globos)
+            setInterval(crearCorazon, 200);
         }
 
-        // Función auxiliar para el efecto visual de los corazones
         function crearCorazon() {
             const corazon = document.createElement('div');
             corazon.classList.add('corazon');
             corazon.innerText = '❤️';
             
-            // Posición horizontal aleatoria
             corazon.style.left = Math.random() * 100 + 'vw';
-            // Tamaño aleatorio para dar profundidad
-            corazon.style.fontSize = Math.random() * (30 - 15) + 15 + 'px';
-            // Duración de la caída aleatoria
-            corazon.style.animationDuration = Math.random() * (5 - 3) + 3 + 's';
+            corazon.style.fontSize = Math.random() * (28 - 16) + 16 + 'px';
+            corazon.style.animationDuration = Math.random() * (4 - 2.5) + 2.5 + 's';
             
             document.body.appendChild(corazon);
             
-            // Eliminar el corazón una vez termine la animación para no saturar la memoria
             setTimeout(() => {
                 corazon.remove();
-            }, 5000);
+            }, 4000);
         }
     </script>
 </body>
