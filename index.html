@@ -3,610 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBM — Catálogo Exclusivo</title>
-    
-    <link rel="icon" type="image/png" href="img/logo1.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <title>Para la persona más especial</title>
     <style>
-        /* --- ESTILOS GENERALES Y RESET --- */
+        /* --- ESTILOS CSS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        :root {
-            --bg-color: #0d0d0d;
-            --card-bg: #141414;
-            --text-main: #ffffff;
-            --text-muted: #a3a3a3;
-            --accent: #d4af37; 
-        }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Montserrat', sans-serif;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            position: relative;
-        }
-
-        /* --- HEADER Y BARRA DE BÚSQUEDA --- */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(to bottom, rgba(13,13,13,0.95), rgba(13,13,13,0.8));
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 15px 4%;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            height: 45px;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            height: 100%;
-            width: auto;
-            object-fit: contain;
-            display: block;
-        }
-
-        .search-box {
-            position: relative;
-            width: 320px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 12px 20px 12px 45px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
-            color: var(--text-main);
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-        }
-
-        /* --- HERO PANTALLA COMPLETA ESTÁTICO --- */
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 20px;
-            position: relative;
-            overflow: hidden;
-            background: var(--bg-color);
-        }
-
-        /* Capa interna para fijar el logo difuminado solo en esta sección */
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('img/logo.png');
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-size: 80%; /* Tamaño elegante del logo */
-            opacity: 0.50; /* Opacidad óptima para que no oculte el texto */
-            filter: blur(4px); /* Difuminado profesional */
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Capa de viñeta para oscurecer los bordes del Hero */
-        .hero::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(13,13,13,0) 20%, rgba(13,13,13,0.95) 90%);
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        /* Contenedor del contenido para asegurar su correcta posición vertical */
-        .hero-content {
-            position: relative;
-            z-index: 3;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-        }
-
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 54px;
-            font-weight: 400;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        .scroll-down {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--accent);
-            animation: bounce 2s infinite;
-            text-align: center;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
-            40% { transform: translate(-50%, -10px); }
-            60% { transform: translate(-50%, -5px); }
-        }
-
-        /* --- SECCIÓN ENCARGOS PERSONALIZADOS --- */
-        .custom-orders-section {
-            padding: 120px 4% 60px 4%;
-            max-width: 1000px;
-            margin: 0 auto;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            opacity: 0;
-            transform: translateY(40px);
-            filter: blur(10px);
-            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .custom-orders-section.visible {
-            opacity: 1;
-            transform: translateY(0);
-            filter: blur(0);
-        }
-
-        .custom-card {
-            background: linear-gradient(145deg, rgba(20,20,20,0.9), rgba(15,15,15,0.9));
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            border-radius: 12px;
-            padding: 50px 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        .custom-card h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 36px;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        .custom-card p {
-            color: var(--text-muted);
-            font-size: 16px;
-            line-height: 1.8;
-            max-width: 750px;
-            margin: 0 auto 35px auto;
-        }
-
-        .custom-badges {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            flex-wrap: wrap;
-        }
-
-        .badge-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255,255,255,0.02);
-            padding: 12px 25px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .badge-item i {
-            color: var(--accent);
-            font-size: 18px;
-        }
-
-        .badge-item span {
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        /* --- DINÁMICOS DE LAS PRENDAS --- */
-        .tshirt-section {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffe6e6, #ffb3ba);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 100px 4%;
-            max-width: 1400px;
-            margin: 0 auto;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            opacity: 0;
-            transform: translateY(50px);
-            filter: blur(15px);
-            transition: all 1.4s cubic-bezier(0.25, 1, 0.5, 1);
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
         }
 
-        .tshirt-section.visible {
-            opacity: 1;
-            transform: translateY(0);
-            filter: blur(0);
-        }
-
-        .section-wrapper {
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
             width: 100%;
-            display: flex;
-            gap: 80px;
-        }
-
-        .tshirt-section:nth-child(even) .section-wrapper {
-            flex-direction: row-reverse;
-        }
-
-        .showcase-container {
-            flex: 1;
+            transition: all 0.5s ease;
             position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .image-showcase {
-            width: 100%;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            transition: opacity 0.3s;
-        }
-
-        .img-box {
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            aspect-ratio: 3/4;
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-
-        .img-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .img-box.main-pic {
-            grid-row: span 2;
-        }
-
-        .nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(13, 13, 13, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             z-index: 10;
-            transition: all 0.3s;
         }
 
-        .nav-btn:hover {
-            background: var(--accent);
-            color: #000;
-            border-color: var(--accent);
-        }
-
-        .nav-btn.prev { left: -25px; } 
-        .nav-btn.next { right: -25px; }
-
-        .details-box {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .tag {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        .details-box h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 42px;
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #ff4d6d;
+            font-size: 3.5rem;
             margin-bottom: 20px;
         }
 
-        .details-box .description {
-            color: var(--text-muted);
+        .intro-text {
+            color: #555;
+            font-size: 1.1rem;
+            line-height: 1.6;
             margin-bottom: 30px;
-            line-height: 1.8;
-            font-size: 15px;
         }
 
-        .price-tag {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            margin-bottom: 35px;
+        .highlight {
+            font-weight: 600;
+            color: #ff4d6d;
         }
 
-        .specs-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        .btn-container {
+            display: flex;
+            justify-content: center;
             gap: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 30px;
+            margin-top: 20px;
+            position: relative;
+            height: 60px;
         }
 
-        .spec-item h4 {
-            font-size: 13px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 5px;
+        button {
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, background-color 0.3s;
         }
 
-        .spec-item p {
-            font-size: 15px;
-            font-weight: 500;
+        #btn-si {
+            background-color: #ff4d6d;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
         }
 
-        #no-results {
+        #btn-si:hover {
+            transform: scale(1.1);
+            background-color: #ff758f;
+        }
+
+        #btn-no {
+            background-color: #6c757d;
+            color: white;
+            position: absolute;
+        }
+
+        /* Carta oculta que aparecerá después */
+        .carta {
             display: none;
-            text-align: center;
-            padding: 100px 20px;
-            color: var(--text-muted);
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
+            opacity: 0;
+            transition: opacity 1s ease;
+            text-align: left;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #ffb3ba;
         }
 
-        footer {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 13px;
+        .carta p {
+            margin-bottom: 15px;
+            color: #444;
+            line-height: 1.7;
         }
 
-        footer span {
-            color: var(--accent);
+        .firma {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: #ff4d6d;
+            text-align: right;
+            margin-top: 20px;
         }
 
-        @media (max-width: 1024px) {
-            .section-wrapper { flex-direction: column; gap: 40px; }
-            .tshirt-section:nth-child(even) .section-wrapper { flex-direction: column; }
-            .nav-btn.prev { left: 10px; } .nav-btn.next { right: 10px; }
+        /* Animación de corazones cayendo */
+        .corazon {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 24px;
+            animation: caida linear forwards;
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @keyframes caida {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-container">
-            <a href="#" class="logo-container">
-                <img src="img/logo.png" alt="SBM Logo" class="logo-img">
-            </a>
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Buscar prenda...">
-                <i class="fa-solid fa-magnifying-glass"></i>
+    <div class="container" id="main-card">
+        <div id="contenido-inicial">
+            <h1>Hola, Noelia</h1>
+            <p class="intro-text">
+                Estas últimas semanas no hemos parado de hablar y, casi sin darme cuenta, te has convertido en alguien increíblemente importante para mí. Tengo algo que decirte de corazón...
+            </p>
+            <h2 style="color: #ff758f; margin-bottom: 25px;">¿Quieres ser mi novia?</h2>
+            
+            <div class="btn-container">
+                <button id="btn-si" onclick="aceptar()">¡Sí! ❤️</button>
+                <button id="btn-no" onmouseover="moverBotonNo()" onclick="moverBotonNo()">No</button>
             </div>
         </div>
-    </header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Colección de Camisetas</h1>
-            <div class="scroll-down">
-                <span>Deslizar para descubrir</span><br>
-                <i class="fa-solid fa-chevron-down" style="margin-top: 8px;"></i>
-            </div>
+        <div class="carta" id="carta-sincera">
+            <h1>¡Gracias! RT ❤️</h1>
+            <p><strong>Noelia</strong>,</p>
+            <p>Sé que a veces puedo parecer un poco reservado o tímido. La verdad es que <span class="highlight">soy bastante nuevo en esto</span> y, como bien sabes, es la primerísima vez que me abro de esta manera y doy un paso así por alguien.</p>
+            <p>Estas semanas a tu lado han sido un descubrimiento constante. He conocido a una persona maravillosa, con la que me he dado cuenta de que <span class="highlight">tenemos muchísimas cosas en común</span>; algo que, sinceramente, pensaba que nunca iba a encontrar en nadie. Me siento increíblemente a gusto y seguro cuando hablo contigo.</p>
+            <p>No te imaginas las noches que me paso dando vueltas en la cama, <span class="highlight">costándome dormir pensando en qué se hará en el mañana</span> y en todo lo que está por venir. Quiero compartir mucho más tiempo contigo, seguir descubriendo tus inquietudes, tus ilusiones y todo lo que te hace ser como eres.</p>
+            <p>Gracias por aparecer y por ser tú.</p>
+            <p class="firma">Con todo mi cariño...</p>
         </div>
-    </section>
+    </div>
 
-    <section class="custom-orders-section" id="custom-info">
-        <div class="custom-card">
-            <span class="tag">Servicio Premium</span>
-            <h2>¿No encuentras lo que buscas?</h2>
-            <p>Realizamos encargos personalizados adaptados a tus preferencias. Precios muy competitivos. Puedes solicitar el modelo, talla o diseño que desees directamente a través de mensajería privada en la plataforma de reventa correspondiente.</p>
-            <div class="custom-badges">
-                <div class="badge-item">
-                    <i class="fa-solid fa-eur"></i>
-                    <span>Desde 18€*</span>
-                </div>
-                <div class="badge-item">
-                    <i class="fa-solid fa-truck-fast"></i>
-                    <span>Entrega en 7 - 15 días</span>
-                </div>
-                <div class="badge-item">
-                    <i class="fa-solid fa-shopping-basket"></i>
-                    <span>Gastos de envío ya incluidos*</span>
-                </div>
-                <div class="badge-item">
-                    <i class="fa-solid fa-thumbs-up"></i>
-                    <span>Calidad TOP</span>
-                </div>
-            </div>
-            <br><p>*Precio final por mensaje privado.*Los gastos de envío solo están incluidos en pedidos personalizados</p>
-        </div>
-    </section>
-
-    <main id="catalog-container"></main>
-    
-    <div id="no-results">No se encontraron prendas que coincidan con la búsqueda.</div>
-    
-    <footer>
-        <p>&copy; 2026 <span>SBM</span>. Todos los derechos reservados.</p>
-    </footer>
-
-    <script src="camisetas.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const container = document.getElementById('catalog-container');
-
-            // 1. CONSTRUCCIÓN AUTOMÁTICA DEL CATÁLOGO DESDE EL ARCHIVO JS
-            if (typeof coleccionCamisetas !== 'undefined') {
-                coleccionCamisetas.forEach((camisa, index) => {
-                    const section = document.createElement('section');
-                    section.className = 'tshirt-section';
-                    section.setAttribute('data-search', `${camisa.nombre} ${camisa.id} ${camisa.corte} ${camisa.material}`.toLowerCase());
-                    
-                    section.innerHTML = `
-                        <div class="section-wrapper">
-                            <div class="showcase-container">
-                                <button class="nav-btn prev" onclick="moveImages(this, -1)"><i class="fa-solid fa-chevron-left"></i></button>
-                                <div class="image-showcase" data-id="${camisa.id}" data-current-index="1" data-total="${camisa.totalFotos}">
-                                    <div class="img-box main-pic"><img class="img-1" src="img/${camisa.id}/1.png"></div>
-                                    <div class="img-box"><img class="img-2" src="img/${camisa.id}/2.png"></div>
-                                    <div class="img-box"><img class="img-3" src="img/${camisa.id}/3.png"></div>
-                                </div>
-                                <button class="nav-btn next" onclick="moveImages(this, 1)"><i class="fa-solid fa-chevron-right"></i></button>
-                            </div>
-                            <div class="details-box">
-                                <span class="tag">Modelo 0${index + 1}</span>
-                                <h2>${camisa.nombre}</h2>
-                                <p class="description">${camisa.description}</p>
-                                <div class="price-tag">${camisa.precio}</div>
-                                <div class="specs-grid">
-                                    <div class="spec-item"><h4>Corte</h4><p>${camisa.corte}</p></div>
-                                    <div class="spec-item"><h4>Material</h4><p>${camisa.material}</p></div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(section);
-                });
-            }
-
-            // 2. DETECTOR DE SCROLL CON EFECTO DE APARICIÓN BLUR (INTERSECTION OBSERVER)
-            const animatedElements = [document.getElementById('custom-info'), ...document.querySelectorAll('.tshirt-section')];
+        // Función para mover el botón "No" cuando intente clickearlo (juego divertido)
+        function moverBotonNo() {
+            const btnNo = document.getElementById('btn-no');
+            const container = document.getElementById('main-card');
             
-            const observerOptions = {
-                root: null,
-                rootMargin: '-60px 0px',
-                threshold: 0.1
-            };
-
-            const globalObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    } else {
-                        entry.target.classList.remove('visible');
-                    }
-                });
-            }, observerOptions);
-
-            animatedElements.forEach(el => {
-                if(el) globalObserver.observe(el);
-            });
-
-            // 3. SOLUCIÓN DEL BUSCADOR EN TIEMPO REAL
-            const searchInput = document.getElementById('search-input');
-            const noResultsMessage = document.getElementById('no-results');
-            const customInfoSection = document.getElementById('custom-info');
-
-            searchInput.addEventListener('input', (e) => {
-                const term = e.target.value.toLowerCase().trim();
-                let hasVisibleProducts = false;
-                
-                const dynamicSections = document.querySelectorAll('.tshirt-section');
-
-                dynamicSections.forEach(section => {
-                    const searchableText = section.getAttribute('data-search');
-                    if (searchableText.includes(term)) {
-                        section.style.display = 'flex';
-                        hasVisibleProducts = true;
-                        setTimeout(() => section.classList.add('visible'), 50);
-                    } else {
-                        section.style.display = 'none';
-                        section.classList.remove('visible');
-                    }
-                });
-
-                if (term.length > 0) {
-                    if(customInfoSection) customInfoSection.style.display = 'none';
-                    noResultsMessage.style.display = hasVisibleProducts ? 'none' : 'block';
-                } else {
-                    if(customInfoSection) customInfoSection.style.display = 'block';
-                    noResultsMessage.style.display = 'none';
-                }
-            });
-        });
-
-        // 4. PASO DE IMÁGENES CONTINUO (1.png, 2.png, 3.png...)
-        function moveImages(button, direction) {
-            const showcase = button.parentElement.querySelector('.image-showcase');
-            const id = showcase.getAttribute('data-id');
-            const total = parseInt(showcase.getAttribute('data-total'));
-            let currentIdx = parseInt(showcase.getAttribute('data-current-index'));
-
-            currentIdx += direction;
+            // Límites para que no se salga de la tarjeta
+            const padding = 20;
+            const xMax = container.clientWidth - btnNo.clientWidth - padding;
+            const yMax = container.clientHeight - btnNo.clientHeight - padding;
             
-            if (currentIdx > total - 2) currentIdx = 1;
-            if (currentIdx < 1) currentIdx = (total - 2 < 1) ? 1 : (total - 2);
+            // Generar posiciones aleatorias
+            const randomX = Math.floor(Math.random() * xMax);
+            const randomY = Math.floor(Math.random() * yMax);
+            
+            // Aplicar nuevas coordenadas dentro de la tarjeta
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+        }
 
-            showcase.setAttribute('data-current-index', currentIdx);
-            showcase.style.opacity = '0.2';
-
+        // Función que se activa al decir que SÍ
+        function aceptar() {
+            // Ocultar el contenido de la pregunta de forma fluida
+            document.getElementById('contenido-inicial').style.display = 'none';
+            
+            // Mostrar la carta con tus palabras reales
+            const carta = document.getElementById('carta-sincera');
+            carta.style.display = 'block';
             setTimeout(() => {
-                showcase.querySelector('.img-1').src = `img/${id}/${currentIdx}.png`;
-                showcase.querySelector('.img-2').src = `img/${id}/${currentIdx + 1}.png`;
-                showcase.querySelector('.img-3').src = `img/${id}/${currentIdx + 2}.png`;
-                showcase.style.opacity = '1';
-            }, 180);
+                carta.style.opacity = '1';
+            }, 100);
+
+            // Lanzar la lluvia de corazones continuos
+            setInterval(crearCorazon, 300);
+        }
+
+        // Función auxiliar para el efecto visual de los corazones
+        function crearCorazon() {
+            const corazon = document.createElement('div');
+            corazon.classList.add('corazon');
+            corazon.innerText = '❤️';
+            
+            // Posición horizontal aleatoria
+            corazon.style.left = Math.random() * 100 + 'vw';
+            // Tamaño aleatorio para dar profundidad
+            corazon.style.fontSize = Math.random() * (30 - 15) + 15 + 'px';
+            // Duración de la caída aleatoria
+            corazon.style.animationDuration = Math.random() * (5 - 3) + 3 + 's';
+            
+            document.body.appendChild(corazon);
+            
+            // Eliminar el corazón una vez termine la animación para no saturar la memoria
+            setTimeout(() => {
+                corazon.remove();
+            }, 5000);
         }
     </script>
 </body>
