@@ -53,7 +53,7 @@
             transition: transform 0.5s ease;
         }
 
-        /* Solapa superior del sobre (Blanca con sombra sutil) */
+        /* Solapa superior del sobre */
         .envelope::before {
             content: "";
             position: absolute;
@@ -67,7 +67,7 @@
             filter: drop-shadow(0 4px 3px rgba(0,0,0,0.06));
         }
 
-        /* Laterales internos del sobre (Gris muy claro para dar volumen) */
+        /* Laterales internos del sobre */
         .envelope::after {
             content: "";
             position: absolute;
@@ -82,7 +82,7 @@
             border-bottom-right-radius: 10px;
         }
 
-        /* Texto exterior "Para Noelia" en un tono suave y elegante */
+        /* Texto exterior "Para Noelia" */
         .envelope-text {
             position: absolute;
             bottom: 25px;
@@ -106,8 +106,7 @@
             pointer-events: none;
         }
 
-
-        /* --- CONTENIDO PRINCIPAL (TU CARTA) --- */
+        /* --- CONTENIDO PRINCIPAL (CARTA) --- */
         .container {
             background: rgba(255, 255, 255, 0.95);
             padding: 30px 20px;
@@ -150,11 +149,47 @@
             color: #ff4d6d;
         }
 
+        /* Sección para desvelar la sorpresa */
+        .desvelar-seccion {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+        }
+
+        #btn-desvelar {
+            background-color: #ff4d6d;
+            color: white;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(255, 77, 109, 0.2);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        #btn-desvelar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 77, 109, 0.3);
+        }
+
+        /* Pregunta oculta inicialmente */
         .pregunta-seccion {
+            display: none;
             margin-top: 30px;
             padding-top: 25px;
             border-top: 2px dashed #ffb3ba;
             text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .pregunta-seccion.reveal-active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .pregunta-seccion h2 {
@@ -164,36 +199,44 @@
             margin-bottom: 20px;
         }
 
+        /* Contenedor adaptativo para que los botones se empujen correctamente */
         .btn-container {
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-wrap: wrap; /* Permite que si el SÍ crece mucho, el NO se mueva abajo en vez de taparse */
             gap: 15px;
             margin-top: 15px;
-            min-height: 60px;
+            min-height: 100px;
+            padding: 10px;
         }
 
-        button {
-            padding: 12px 30px;
-            font-size: 1.1rem;
+        button.opcion {
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             -webkit-tap-highlight-color: transparent;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #btn-si {
             background-color: #ff4d6d;
             color: white;
             box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+            font-size: 1.1rem;
+            padding: 12px 30px;
         }
 
         #btn-no {
             background-color: #6c757d;
             color: white;
             opacity: 0.8;
+            font-size: 1.1rem;
+            padding: 12px 30px;
         }
 
         /* Pantalla de éxito final */
@@ -239,14 +282,12 @@
 </head>
 <body>
 
-    <!-- PRE-PORTADA: EL SOBRE BLANCO -->
     <div class="envelope-wrapper" id="envelopeWrapper">
         <div class="envelope" onclick="abrirCarta()">
             <div class="envelope-text">Para Noelia</div>
         </div>
     </div>
 
-    <!-- CONTENIDO DE LA CARTA -->
     <div class="container" id="cartaContainer">
         <div id="bloque-principal">
             <h1>Hola, Noelia</h1>
@@ -261,11 +302,15 @@
                 <h3 style="color:#ff4d6d; font-family:'Dancing Script', cursive; font-size:1.8rem; text-align:center; margin-top:15px;">Quiero dar un paso mas allá y te queria preguntar...</h3>
             </div>
 
-            <div class="pregunta-seccion">
+            <div class="desvelar-seccion" id="seccionDesvelarBtn">
+                <button id="btn-desvelar" onclick="desvelarPregunta()">Desvelar pregunta</button>
+            </div>
+
+            <div class="pregunta-seccion" id="preguntaSorpresa">
                 <h2>¿Quieres ser mi novia?</h2>
                 <div class="btn-container">
-                    <button id="btn-si" onclick="aceptar()">¡Sí! ❤️</button>
-                    <button id="btn-no" onclick="achicarNo()">No 😔</button>
+                    <button id="btn-si" class="opcion" onclick="aceptar()">¡Sí! ❤️</button>
+                    <button id="btn-no" class="opcion" onclick="achicarNo()">No 😔</button>
                 </div>
             </div>
         </div>
@@ -279,8 +324,14 @@
     </div>
 
     <script>
-        let escalaSi = 1;
-        let escalaNo = 1;
+        // Variables para controlar el tamaño real (en píxeles y rem)
+        let siFontSize = 1.1;
+        let siPaddingV = 12;
+        let siPaddingH = 30;
+        
+        let noFontSize = 1.1;
+        let noPaddingV = 12;
+        let noPaddingH = 30;
 
         // Función para abrir la carta con animación
         function abrirCarta() {
@@ -296,19 +347,41 @@
             }, 700); 
         }
 
-        // Función por si pulsa el "No" en el móvil
+        // Función para desvelar la pregunta final
+        function desvelarPregunta() {
+            document.getElementById('seccionDesvelarBtn').style.display = 'none';
+            const pregunta = document.getElementById('preguntaSorpresa');
+            pregunta.classList.add('reveal-active');
+            
+            setTimeout(() => {
+                pregunta.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 100);
+        }
+
+        // Nueva lógica: Modifica propiedades físicas reales para evitar bugs de clics
         function achicarNo() {
             const btnSi = document.getElementById('btn-si');
             const btnNo = document.getElementById('btn-no');
             
-            escalaSi += 0.2;
-            escalaNo -= 0.15;
+            // 1. El SÍ crece, pero le ponemos un tope máximo para que no rompa el diseño (máx 2.5rem de letra)
+            if (siFontSize < 2.5) {
+                siFontSize += 0.2;
+                siPaddingV += 4;
+                siPaddingH += 8;
+                
+                btnSi.style.fontSize = `${siFontSize}rem`;
+                btnSi.style.padding = `${siPaddingV}px ${siPaddingH}px`;
+            }
             
-            btnSi.style.transform = `scale(${escalaSi})`;
-            btnNo.style.transform = `scale(${escalaNo})`;
-            
-            if (escalaNo <= 0.4) {
-                btnNo.style.display = 'none'; 
+            // 2. El NO se encoge un poco en el primer/segundo clic, pero se planta en un mínimo cómodo
+            // Mínimo de letra: 0.8rem y un acolchado interno perfectamente pulsable
+            if (noFontSize > 0.8) {
+                noFontSize -= 0.1;
+                noPaddingV -= 1.5;
+                noPaddingH -= 3;
+                
+                btnNo.style.fontSize = `${noFontSize}rem`;
+                btnNo.style.padding = `${noPaddingV}px ${noPaddingH}px`;
             }
         }
 
