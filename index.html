@@ -25,6 +25,89 @@
             padding: 15px;
         }
 
+        /* --- CONTENEDOR DEL SOBRE DE LA CARTA --- */
+        .envelope-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffe6e6, #ffb3ba);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background-color: #ffffff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+
+        /* Solapa superior del sobre (Blanca con sombra sutil) */
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            z-index: 5;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid #ffffff;
+            transform-origin: top;
+            transition: transform 0.4s ease 0.2s, z-index 0.2s step-end 0.2s;
+            filter: drop-shadow(0 4px 3px rgba(0,0,0,0.06));
+        }
+
+        /* Laterales internos del sobre (Gris muy claro para dar volumen) */
+        .envelope::after {
+            content: "";
+            position: absolute;
+            z-index: 3;
+            width: 0;
+            height: 0;
+            border-left: 150px solid #f5f5f5;
+            border-right: 150px solid #f5f5f5;
+            border-bottom: 100px solid #fbfbfb;
+            border-top: 100px solid transparent;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        /* Texto exterior "Para Noelia" en un tono suave y elegante */
+        .envelope-text {
+            position: absolute;
+            bottom: 25px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            color: #ff4d6d;
+            font-size: 2.2rem;
+            z-index: 4;
+        }
+
+        /* --- ESTADOS DE LA ANIMACIÓN AL ABRIR --- */
+        .envelope.open::before {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-wrapper.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+
+        /* --- CONTENIDO PRINCIPAL (TU CARTA) --- */
         .container {
             background: rgba(255, 255, 255, 0.95);
             padding: 30px 20px;
@@ -34,6 +117,14 @@
             width: 100%;
             position: relative;
             z-index: 10;
+            opacity: 0;
+            transform: scale(0.9) translateY(30px);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s ease;
+        }
+
+        .container.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
         }
 
         h1 {
@@ -90,7 +181,7 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent; /* Elimina el flash azul en móviles */
+            -webkit-tap-highlight-color: transparent;
         }
 
         #btn-si {
@@ -148,7 +239,15 @@
 </head>
 <body>
 
-    <div class="container">
+    <!-- PRE-PORTADA: EL SOBRE BLANCO -->
+    <div class="envelope-wrapper" id="envelopeWrapper">
+        <div class="envelope" onclick="abrirCarta()">
+            <div class="envelope-text">Para Noelia</div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO DE LA CARTA -->
+    <div class="container" id="cartaContainer">
         <div id="bloque-principal">
             <h1>Hola, Noelia</h1>
             
@@ -159,7 +258,7 @@
                 <p>El otro día mientras caminabamos por el parque descubrí por primera vez lo que era hablar con una chica y que se interesase por mí, nunca habia sentido esa sensación y <span class="highlight">fue algo maravilloso.</span> Tengo que decirte que si no me salian las palabras ese día es porque estaba eclipsado ante tal situación.</p>
                 <p>No te imaginas las noches que me paso dando vueltas en la cama, <span class="highlight">costándome dormir pensando en qué se hará en el mañana</span> y en todo lo que está por venir. Quiero compartir mucho más tiempo contigo, seguir descubriendo tus inquietudes, tus ilusiones y todo lo que te hace ser tan especial.</p>
                 <p>Por eso... Estas últimas semanas no hemos parado de hablar y, casi sin darme cuenta, te has convertido en alguien increíblemente importante para mí. Tengo algo que decirte de corazón...</p>
-                <h3>Quiero dar un paso mas allá y te queria preguntar...</h3>
+                <h3 style="color:#ff4d6d; font-family:'Dancing Script', cursive; font-size:1.8rem; text-align:center; margin-top:15px;">Quiero dar un paso mas allá y te queria preguntar...</h3>
             </div>
 
             <div class="pregunta-seccion">
@@ -175,19 +274,33 @@
             <h1>¡SÍ! ❤️</h1>
             <p style="font-size: 1.2rem; color: #555; margin-top: 15px;">Me has alegrado estos días y me he sentido la persona más feliz del mundo.</p>
             <p style="font-size: 1rem; color: #777; margin-top: 10px;">¡Gracias por decir que sí!</p>
-            <img src="cat.gif" alt="Gato animado" style="max-width: 180px; width: 100%; height: auto; margin-top: 25px; border-radius: 12px;">        </div>
+            <img src="cat.gif" alt="Gato animado" style="max-width: 180px; width: 100%; height: auto; margin-top: 25px; border-radius: 12px;">
+        </div>
     </div>
 
     <script>
         let escalaSi = 1;
         let escalaNo = 1;
 
+        // Función para abrir la carta con animación
+        function abrirCarta() {
+            const envelope = document.querySelector('.envelope');
+            const wrapper = document.getElementById('envelopeWrapper');
+            const container = document.getElementById('cartaContainer');
+
+            envelope.classList.add('open');
+
+            setTimeout(() => {
+                wrapper.classList.add('fade-out');
+                container.classList.add('show');
+            }, 700); 
+        }
+
         // Función por si pulsa el "No" en el móvil
         function achicarNo() {
             const btnSi = document.getElementById('btn-si');
             const btnNo = document.getElementById('btn-no');
             
-            // El "Sí" se hace más grande y el "No" más pequeño
             escalaSi += 0.2;
             escalaNo -= 0.15;
             
@@ -195,19 +308,14 @@
             btnNo.style.transform = `scale(${escalaNo})`;
             
             if (escalaNo <= 0.4) {
-                btnNo.style.display = 'none'; // Si insiste mucho, desaparece
+                btnNo.style.display = 'none'; 
             }
         }
 
         // Función que se activa al presionar SÍ
         function aceptar() {
-            // Ocultamos la carta y la pregunta
             document.getElementById('bloque-principal').style.display = 'none';
-            
-            // Mostramos el mensaje final feliz
             document.getElementById('bloque-exito').style.display = 'block';
-
-            // Iniciamos la lluvia de corazones desde abajo hacia arriba (efecto globos)
             setInterval(crearCorazon, 200);
         }
 
