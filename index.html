@@ -199,12 +199,12 @@
             margin-bottom: 20px;
         }
 
-        /* Contenedor adaptativo para que los botones se empujen correctamente */
+        /* Contenedor adaptativo para los botones */
         .btn-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap; /* Permite que si el SÍ crece mucho, el NO se mueva abajo en vez de taparse */
+            flex-wrap: wrap;
             gap: 15px;
             margin-top: 15px;
             min-height: 100px;
@@ -239,8 +239,8 @@
             padding: 12px 30px;
         }
 
-        /* Pantalla de éxito final */
-        .exito-pantalla {
+        /* Pantallas de respuesta final */
+        .exito-pantalla, .triste-pantalla {
             display: none;
             text-align: center;
             padding: 40px 10px;
@@ -249,6 +249,12 @@
         .exito-pantalla h1 {
             font-size: 3.5rem;
             animation: latido 1.2s infinite;
+        }
+
+        .triste-pantalla h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #555;
+            font-size: 3rem;
         }
 
         @keyframes latido {
@@ -282,6 +288,9 @@
 </head>
 <body>
 
+    <audio id="audioHappy" src="happy.mp3" preload="auto"></audio>
+    <audio id="audioSad" src="sad.mp3" preload="auto"></audio>
+
     <div class="envelope-wrapper" id="envelopeWrapper">
         <div class="envelope" onclick="abrirCarta()">
             <div class="envelope-text">Para Noelia</div>
@@ -303,7 +312,7 @@
             </div>
 
             <div class="desvelar-seccion" id="seccionDesvelarBtn">
-                <button id="btn-desvelar" onclick="desvelarPregunta()">Desvelar pregunta</button>
+                <button id="btn-desvelar" onclick="desvelarPregunta()">Descubrir... 🔍</button>
             </div>
 
             <div class="pregunta-seccion" id="preguntaSorpresa">
@@ -319,12 +328,19 @@
             <h1>¡SÍ! ❤️</h1>
             <p style="font-size: 1.2rem; color: #555; margin-top: 15px;">Me has alegrado estos días y me he sentido la persona más feliz del mundo.</p>
             <p style="font-size: 1rem; color: #777; margin-top: 10px;">¡Gracias por decir que sí!</p>
-            <img src="cat.gif" alt="Gato animado" style="max-width: 180px; width: 100%; height: auto; margin-top: 25px; border-radius: 12px;">
+            <img src="cat.gif" alt="Gato animado feliz" style="max-width: 180px; width: 100%; height: auto; margin-top: 25px; border-radius: 12px;">
+        </div>
+
+        <div id="bloque-triste" class="triste-pantalla">
+            <h1>Oh... bueno... 🥺</h1>
+            <p style="font-size: 1.1rem; color: #555; margin-top: 15px;">Al menos lo he intentado con todo mi corazón.</p>
+            <p style="font-size: 0.95rem; color: #777; margin-top: 10px;">Seguiré valorando mucho tenerte en mi vida.</p>
+            <img src="catsad.gif" alt="Gato triste" style="max-width: 180px; width: 100%; height: auto; margin-top: 25px; border-radius: 12px;">
         </div>
     </div>
 
     <script>
-        // Variables para controlar el tamaño real (en píxeles y rem)
+        // Variables para controlar el tamaño
         let siFontSize = 1.1;
         let siPaddingV = 12;
         let siPaddingH = 30;
@@ -332,6 +348,9 @@
         let noFontSize = 1.1;
         let noPaddingV = 12;
         let noPaddingH = 30;
+
+        // Variable para comprobar si el botón "No" ya alcanzó su tamaño mínimo
+        let noAlcanzoMinimo = false;
 
         // Función para abrir la carta con animación
         function abrirCarta() {
@@ -358,12 +377,18 @@
             }, 100);
         }
 
-        // Nueva lógica: Modifica propiedades físicas reales para evitar bugs de clics
+        // Función para manejar el botón "No"
         function achicarNo() {
+            // Si ya estaba en su tamaño mínimo y se vuelve a pulsar, activa el modo triste
+            if (noAlcanzoMinimo) {
+                rechazar();
+                return;
+            }
+
             const btnSi = document.getElementById('btn-si');
             const btnNo = document.getElementById('btn-no');
             
-            // 1. El SÍ crece, pero le ponemos un tope máximo para que no rompa el diseño (máx 2.5rem de letra)
+            // El SÍ crece paulatinamente
             if (siFontSize < 2.5) {
                 siFontSize += 0.2;
                 siPaddingV += 4;
@@ -373,8 +398,7 @@
                 btnSi.style.padding = `${siPaddingV}px ${siPaddingH}px`;
             }
             
-            // 2. El NO se encoge un poco en el primer/segundo clic, pero se planta en un mínimo cómodo
-            // Mínimo de letra: 0.8rem y un acolchado interno perfectamente pulsable
+            // El NO se encoge hasta llegar a su límite mínimo
             if (noFontSize > 0.8) {
                 noFontSize -= 0.1;
                 noPaddingV -= 1.5;
@@ -382,6 +406,9 @@
                 
                 btnNo.style.fontSize = `${noFontSize}rem`;
                 btnNo.style.padding = `${noPaddingV}px ${noPaddingH}px`;
+            } else {
+                // Una vez que llega al mínimo (0.8rem), marcamos que la siguiente pulsación activará el "Sad"
+                noAlcanzoMinimo = true;
             }
         }
 
@@ -389,7 +416,22 @@
         function aceptar() {
             document.getElementById('bloque-principal').style.display = 'none';
             document.getElementById('bloque-exito').style.display = 'block';
+            
+            // Reproducir música alegre
+            const audioHappy = document.getElementById('audioHappy');
+            audioHappy.play().catch(error => console.log("La reproducción automática requiere interacción previa:", error));
+            
             setInterval(crearCorazon, 200);
+        }
+
+        // Función que se activa al presionar NO cuando ya es pequeño
+        function rechazar() {
+            document.getElementById('bloque-principal').style.display = 'none';
+            document.getElementById('bloque-triste').style.display = 'block';
+            
+            // Reproducir música triste
+            const audioSad = document.getElementById('audioSad');
+            audioSad.play().catch(error => console.log("La reproducción automática requiere interacción previa:", error));
         }
 
         function crearCorazon() {
