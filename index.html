@@ -23,6 +23,7 @@
             flex-direction: column;
             gap: 15px;
             text-align: center;
+            align-items: center; /* Asegura que los hijos estén perfectamente centrados */
         }
         h2 {
             margin-bottom: 10px;
@@ -50,6 +51,8 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
         .btn:hover {
             background: #1f6feb;
@@ -73,20 +76,21 @@
             justify-content: center;
             z-index: 100;
         }
-        input[type="password"] {
+        /* Input numérico centrado y adaptado */
+        input[type="password"], input.pin-input {
             background: #0d1117;
             border: 1px solid #30363d;
             color: #fff;
             padding: 12px;
             border-radius: 8px;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             text-align: center;
             width: 200px;
             outline: none;
             margin-bottom: 15px;
-            letter-spacing: 4px;
+            letter-spacing: 8px;
         }
-        input[type="password"]:focus {
+        input[type="password"]:focus, input.pin-input:focus {
             border-color: #58a6ff;
         }
         .error {
@@ -106,14 +110,15 @@
     <div id="pin-overlay">
         <div class="container">
             <h2>Acceso Restringido</h2>
-            <p>Introduce tu PIN de seguridad:</p>
-            <input type="password" id="pinInput" placeholder="••••" maxlength="8" autofocus>
+            <p>Introduce tu PIN numérico:</p>
+            <!-- Usamos type="password" con patrón numérico para forzar teclado de números y ocultar los dígitos -->
+            <input type="password" inputmode="numeric" pattern="[0-9]*" id="pinInput" placeholder="••••" maxlength="8" autofocus>
             <div id="errorMsg" class="error">PIN incorrecto</div>
             <button class="btn" onclick="verifyPin()">Desbloquear</button>
         </div>
     </div>
 
-    <!-- Contenido principal (Los botones se generan dinámicamente tras acertar) -->
+    <!-- Contenido principal -->
     <div class="container hidden" id="main-content">
         <h2>SBM Gateway</h2>
         <p>Selecciona tu ubicación actual para acceder al servidor:</p>
@@ -128,11 +133,11 @@
     </div>
 
     <script>
-        // 🔐 HASH SHA-256 DEL PIN (Por defecto configurado para el PIN: "1234")
-        const CORRECT_HASH = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4";
+        
+        const CORRECT_HASH = "4127bccc19dff8f72c5914cda39b6f6817aee3c5653c680837321e5406decabb";
 
+        // 🔒 URLs CODIFICADAS EN BASE64
         const ENC_LOCAL = "aHR0cDovLzE5Mi4xNjguMTAuMTU5OjUwODAv";
-
         const ENC_REMOTE = "aHR0cDovL251YmVzYm0udGFpbDljY2YzNy50cy5uZXQ6NTA4MC8=";
 
         async function sha256(message) {
@@ -147,11 +152,9 @@
             const inputHash = await sha256(inputVal);
 
             if (inputHash === CORRECT_HASH) {
-                // Descodificamos las URLs en caliente solo al superar el PIN
                 document.getElementById("btnLocal").href = atob(ENC_LOCAL);
                 document.getElementById("btnRemote").href = atob(ENC_REMOTE);
 
-                // Mostramos el menú y ocultamos el login
                 document.getElementById("pin-overlay").classList.add("hidden");
                 document.getElementById("main-content").classList.remove("hidden");
             } else {
