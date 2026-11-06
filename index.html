@@ -63,11 +63,58 @@
             background: #2ea043;
             border-color: #3fb950;
         }
+        #pin-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #121212;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        input[type="password"] {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+            width: 200px;
+            outline: none;
+            margin-bottom: 15px;
+            letter-spacing: 4px;
+        }
+        input[type="password"]:focus {
+            border-color: #58a6ff;
+        }
+        .error {
+            color: #f85149;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <!-- Capa de bloqueo por PIN (Siempre aparece al cargar) -->
+    <div id="pin-overlay">
+        <div class="container">
+            <h2>Acceso Restringido</h2>
+            <p>Introduce tu PIN de seguridad:</p>
+            <input type="password" id="pinInput" placeholder="••••" maxlength="8" autofocus>
+            <div id="errorMsg" class="error">PIN incorrecto</div>
+            <button class="btn" onclick="verifyPin()">Desbloquear</button>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container hidden" id="main-content">
         <h2>SBM Gateway</h2>
         <p>Selecciona tu ubicación actual para acceder al servidor:</p>
 
@@ -80,5 +127,37 @@
         </a>
     </div>
 
+    <script>
+        // 🔐 AQUÍ ESTÁ EL HASH SHA-256 DE TU PIN.
+        const CORRECT_HASH = "4127bccc19dff8f72c5914cda39b6f6817aee3c5653c680837321e5406decabb";
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function verifyPin() {
+            const inputVal = document.getElementById("pinInput").value;
+            const inputHash = await sha256(inputVal);
+
+            if (inputHash === CORRECT_HASH) {
+                // Al NO usar sessionStorage ni localStorage, la sesión muere 
+                // en cuanto se cierra o se recarga la página, exigiendo PIN siempre.
+                document.getElementById("pin-overlay").classList.add("hidden");
+                document.getElementById("main-content").classList.remove("hidden");
+            } else {
+                document.getElementById("errorMsg").style.display = "block";
+                document.getElementById("pinInput").value = "";
+            }
+        }
+
+        document.getElementById("pinInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                verifyPin();
+            }
+        });
+    </script>
 </body>
 </html>
