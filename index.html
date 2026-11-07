@@ -23,10 +23,10 @@
             flex-direction: column;
             gap: 15px;
             text-align: center;
-            align-items: center; /* Asegura que los hijos estén perfectamente centrados */
+            align-items: center;
         }
         h2 {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             font-size: 1.5rem;
             color: #58a6ff;
         }
@@ -34,13 +34,13 @@
             color: #8b949e;
             font-size: 0.9rem;
             margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .btn {
             background: #161b22;
             color: #fff;
             border: 1px solid #30363d;
-            padding: 16px;
+            padding: 14px 16px;
             border-radius: 12px;
             font-size: 1.1rem;
             font-weight: bold;
@@ -50,7 +50,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
             box-sizing: border-box;
         }
@@ -66,6 +66,24 @@
             background: #2ea043;
             border-color: #3fb950;
         }
+        .btn-back {
+            background: transparent;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            margin-top: 10px;
+        }
+        .btn-back:hover {
+            background: #21262d;
+            color: #fff;
+            transform: none;
+        }
+        .menu-icon {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
         #pin-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -76,7 +94,6 @@
             justify-content: center;
             z-index: 100;
         }
-        /* Input numérico centrado y adaptado */
         input[type="password"], input.pin-input {
             background: #0d1117;
             border: 1px solid #30363d;
@@ -111,31 +128,52 @@
         <div class="container">
             <h2>Acceso Restringido</h2>
             <p>Introduce tu PIN numérico:</p>
-            <!-- Usamos type="password" con patrón numérico para forzar teclado de números y ocultar los dígitos -->
             <input type="password" inputmode="numeric" pattern="[0-9]*" id="pinInput" placeholder="••••" maxlength="8" autofocus>
             <div id="errorMsg" class="error">PIN incorrecto</div>
             <button class="btn" onclick="verifyPin()">Desbloquear</button>
         </div>
     </div>
 
-    <!-- Contenido principal -->
+    <!-- Contenido principal: Selección de Ubicación -->
     <div class="container hidden" id="main-content">
         <h2>SBM Gateway</h2>
-        <p>Selecciona tu ubicación actual para acceder al servidor:</p>
+        <p>Selecciona tu ubicación actual:</p>
 
-        <a href="#" id="btnLocal" class="btn btn-local">
+        <button class="btn btn-local" onclick="selectMode('local')">
             🏠 En Casa (Local)
+        </button>
+
+        <button class="btn" onclick="selectMode('remote')">
+            🌍 Fuera de Casa (Remoto)
+        </button>
+    </div>
+
+    <!-- Submenú de Servicios -->
+    <div class="container hidden" id="services-submenu">
+        <h2 id="submenu-title">Servicios</h2>
+        <p>Selecciona la aplicación a la que deseas acceder:</p>
+
+        <a href="#" id="btnIPTV" class="btn">
+            <img src="./img/iptv.png" alt="IPTV" class="menu-icon"> IPTV
         </a>
 
-        <a href="#" id="btnRemote" class="btn">
-            🌍 Fuera de Casa (Remoto)
+        <a href="#" id="btnGaleNAS" class="btn">
+            <img src="./img/galenas.png" alt="GaleNAS" class="menu-icon"> GaleNAS
         </a>
+
+        <a href="#" id="btnTVOptimizer" class="btn">
+            <img src="./img/cleaner.png" alt="TV Optimizer" class="menu-icon"> TV Optimizer
+        </a>
+
+        <button class="btn btn-back" onclick="goBack()">
+            ← Cambiar ubicación
+        </button>
     </div>
 
     <script>
-        
         const CORRECT_HASH = "4127bccc19dff8f72c5914cda39b6f6817aee3c5653c680837321e5406decabb";
 
+        // URLs Base en Base64
         const ENC_LOCAL = "aHR0cDovLzE5Mi4xNjguMTAuMTU5OjUwODAv";
         const ENC_REMOTE = "aHR0cDovL251YmVzYm0udGFpbDljY2YzNy50cy5uZXQ6NTA4MC8=";
 
@@ -151,9 +189,6 @@
             const inputHash = await sha256(inputVal);
 
             if (inputHash === CORRECT_HASH) {
-                document.getElementById("btnLocal").href = atob(ENC_LOCAL);
-                document.getElementById("btnRemote").href = atob(ENC_REMOTE);
-
                 document.getElementById("pin-overlay").classList.add("hidden");
                 document.getElementById("main-content").classList.remove("hidden");
             } else {
@@ -167,6 +202,33 @@
                 verifyPin();
             }
         });
+
+        function selectMode(mode) {
+            const rawUrl = atob(mode === 'local' ? ENC_LOCAL : ENC_REMOTE);
+            
+            // Configurar URLs dinámicamente según el puerto requerido
+            const urlIPTV = new URL(rawUrl);
+            urlIPTV.port = ""; // Sin puerto
+            document.getElementById("btnIPTV").href = urlIPTV.toString();
+
+            const urlGaleNAS = new URL(rawUrl);
+            urlGaleNAS.port = "5080"; // Puerto 5080
+            document.getElementById("btnGaleNAS").href = urlGaleNAS.toString();
+
+            const urlTVOptimizer = new URL(rawUrl);
+            urlTVOptimizer.port = "8090"; // Puerto 8090
+            document.getElementById("btnTVOptimizer").href = urlTVOptimizer.toString();
+
+            // Actualizar título y visibilidad
+            document.getElementById("submenu-title").innerText = mode === 'local' ? '🏠 Modo Local' : '🌍 Modo Remoto';
+            document.getElementById("main-content").classList.add("hidden");
+            document.getElementById("services-submenu").classList.remove("hidden");
+        }
+
+        function goBack() {
+            document.getElementById("services-submenu").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+        }
     </script>
 </body>
 </html>
