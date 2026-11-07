@@ -40,7 +40,7 @@
             background: #161b22;
             color: #fff;
             border: 1px solid #30363d;
-            padding: 14px 16px;
+            padding: 16px;
             border-radius: 12px;
             font-size: 1.1rem;
             font-weight: bold;
@@ -50,7 +50,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
             width: 100%;
             box-sizing: border-box;
         }
@@ -71,7 +70,7 @@
             border: 1px solid #30363d;
             color: #8b949e;
             font-size: 0.9rem;
-            padding: 8px 12px;
+            padding: 10px 14px;
             margin-top: 10px;
         }
         .btn-back:hover {
@@ -79,9 +78,10 @@
             color: #fff;
             transform: none;
         }
-        .menu-icon {
-            width: 28px;
-            height: 28px;
+        /* Tamaño mediano para las imágenes del submenú */
+        .menu-icon-only {
+            width: 64px;
+            height: 64px;
             object-fit: contain;
         }
         #pin-overlay {
@@ -148,21 +148,21 @@
         </button>
     </div>
 
-    <!-- Submenú de Servicios -->
+    <!-- Submenú de Servicios (Solo Imágenes Medianas) -->
     <div class="container hidden" id="services-submenu">
         <h2 id="submenu-title">Servicios</h2>
-        <p>Selecciona la aplicación a la que deseas acceder:</p>
+        <p>Selecciona la aplicación:</p>
 
         <a href="#" id="btnIPTV" class="btn">
-            <img src="./img/iptv.png" alt="IPTV" class="menu-icon"> IPTV
+            <img src="./img/iptv.png" alt="IPTV" class="menu-icon-only">
         </a>
 
         <a href="#" id="btnGaleNAS" class="btn">
-            <img src="./img/galenas.png" alt="GaleNAS" class="menu-icon"> GaleNAS
+            <img src="./img/galenas.png" alt="GaleNAS" class="menu-icon-only">
         </a>
 
         <a href="#" id="btnTVOptimizer" class="btn">
-            <img src="./img/cleaner.png" alt="TV Optimizer" class="menu-icon"> TV Optimizer
+            <img src="./img/cleaner.png" alt="TV Optimizer" class="menu-icon-only">
         </a>
 
         <button class="btn btn-back" onclick="goBack()">
@@ -206,20 +206,22 @@
         function selectMode(mode) {
             const rawUrl = atob(mode === 'local' ? ENC_LOCAL : ENC_REMOTE);
             
-            // Configurar URLs dinámicamente según el puerto requerido
+            // IPTV (Sin puerto)
             const urlIPTV = new URL(rawUrl);
-            urlIPTV.port = ""; // Sin puerto
+            urlIPTV.port = "";
             document.getElementById("btnIPTV").href = urlIPTV.toString();
 
+            // GaleNAS (Puerto 5080)
             const urlGaleNAS = new URL(rawUrl);
-            urlGaleNAS.port = "5080"; // Puerto 5080
+            urlGaleNAS.port = "5080";
             document.getElementById("btnGaleNAS").href = urlGaleNAS.toString();
 
+            // TV Optimizer (Puerto 8090)
             const urlTVOptimizer = new URL(rawUrl);
-            urlTVOptimizer.port = "8090"; // Puerto 8090
+            urlTVOptimizer.port = "8090";
             document.getElementById("btnTVOptimizer").href = urlTVOptimizer.toString();
 
-            // Actualizar título y visibilidad
+            // Actualizar vista
             document.getElementById("submenu-title").innerText = mode === 'local' ? '🏠 Modo Local' : '🌍 Modo Remoto';
             document.getElementById("main-content").classList.add("hidden");
             document.getElementById("services-submenu").classList.remove("hidden");
