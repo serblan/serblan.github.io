@@ -31,16 +31,13 @@
   .btn:disabled { opacity: .5; cursor: not-allowed; }
   .btn-local { border-color: #238636; }
   .btn-local:hover:not(:disabled) { background: #2ea043; border-color: #3fb950; }
-  input, textarea {
+  input {
     background: #0d1117; border: 1px solid #30363d; color: #fff; padding: 12px;
     border-radius: 8px; font-size: 1rem; width: 100%; outline: none; font-family: inherit;
   }
-  input:focus, textarea:focus { border-color: #58a6ff; }
-  textarea { font-family: ui-monospace, monospace; font-size: .75rem; height: 140px; resize: vertical; }
+  input:focus { border-color: #58a6ff; }
   .error { color: #f85149; font-size: .85rem; min-height: 1.2em; margin: 0; }
-  .ok { color: #3fb950; font-size: .85rem; }
   .hidden { display: none !important; }
-  label { align-self: flex-start; font-size: .8rem; color: #8b949e; }
 </style>
 </head>
 <body>
@@ -52,23 +49,6 @@
   <input type="password" id="pwd" autocomplete="current-password" autofocus>
   <p class="error" id="errorMsg"></p>
   <button class="btn" id="unlockBtn">Desbloquear</button>
-</div>
-
-<!-- Modo configuración (primer uso o #setup): genera el bloque cifrado -->
-<div class="container hidden" id="setup-screen">
-  <h2>Configuración inicial</h2>
-  <p>Genera el bloque cifrado y pégalo en la constante <code>ENCRYPTED_BLOB</code>.</p>
-  <label>Contraseña (mín. 12 caracteres, mejor una frase)</label>
-  <input type="password" id="s-pwd" autocomplete="new-password">
-  <label>Repite la contraseña</label>
-  <input type="password" id="s-pwd2" autocomplete="new-password">
-  <label>URL local</label>
-  <input type="url" id="s-local" placeholder="http://192.168.x.x:5080/">
-  <label>URL remota</label>
-  <input type="url" id="s-remote" placeholder="http://host.ts.net:5080/">
-  <p class="error" id="s-err"></p>
-  <button class="btn" id="genBtn">Generar bloque cifrado</button>
-  <textarea id="s-out" class="hidden" readonly></textarea>
 </div>
 
 <!-- Menú de ubicación -->
@@ -95,8 +75,8 @@
   'use strict';
 
   // ───────────── CONFIGURACIÓN ─────────────
-  // Se rellena con el bloque generado en el modo configuración (index.html#setup).
   // Contiene SOLO texto cifrado: sin la contraseña no revela nada.
+  // Para regenerarlo usa setup.html en local (no lo subas al repositorio).
   const ENCRYPTED_BLOB = "CXvKCzFwofCaZk3+Ss43oW5OG0JvqWOPUtiLkEc9x+1kEIIEiLOG0WOPvOXhnNHPevwp8/CrAou6wY2pdPvhxwgZQ/ZLzbbvwCxKv1yqVgDWZL09Gnky48fX3jpAGUfBN4OPTny7zZNiGCn6JS4VyTArzFVEsU3TnwgL";
 
   const PBKDF2_ITERATIONS = 600000;   // coste de fuerza bruta por intento
@@ -108,7 +88,6 @@
   // ───────────── UTILIDADES ─────────────
   const $ = id => document.getElementById(id);
   const enc = new TextEncoder(), dec = new TextDecoder();
-  const toB64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
   const fromB64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
   const show = id => $(id).classList.remove('hidden');
   const hide = id => $(id).classList.add('hidden');
@@ -118,16 +97,6 @@
     return crypto.subtle.deriveKey(
       { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
       base, { name: 'AES-GCM', length: 256 }, false, usages);
-  }
-
-  async function encryptPayload(password, obj) {
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const iv = crypto.getRandomValues(new Uint8Array(12));
-    const key = await deriveKey(password, salt, ['encrypt']);
-    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(obj)));
-    const out = new Uint8Array(16 + 12 + ct.byteLength);
-    out.set(salt, 0); out.set(iv, 16); out.set(new Uint8Array(ct), 28);
-    return toB64(out);
   }
 
   async function decryptPayload(password, blob) {
@@ -216,33 +185,9 @@
     window.location.href = u.toString();
   }
 
-  // ───────────── MODO CONFIGURACIÓN ─────────────
-  async function generate() {
-    const err = $('s-err'), out = $('s-out');
-    const pwd = $('s-pwd').value, pwd2 = $('s-pwd2').value;
-    const local = $('s-local').value.trim(), remote = $('s-remote').value.trim();
-    err.textContent = ''; out.classList.add('hidden');
-    if (pwd.length < 12) { err.textContent = 'La contraseña debe tener al menos 12 caracteres.'; return; }
-    if (pwd !== pwd2) { err.textContent = 'Las contraseñas no coinciden.'; return; }
-    try { new URL(local); new URL(remote); } catch { err.textContent = 'URLs no válidas.'; return; }
-    $('genBtn').disabled = true; err.textContent = 'Generando…';
-    try {
-      const blob = await encryptPayload(pwd, { local, remote });
-      out.value = `const ENCRYPTED_BLOB = "${blob}";`;
-      out.classList.remove('hidden');
-      err.innerHTML = '<span class="ok">Listo. Copia esta línea sustituyendo la constante vacía.</span>';
-    } finally { $('genBtn').disabled = false; }
-  }
-
   // ───────────── ARRANQUE ─────────────
   if (!window.isSecureContext || !crypto.subtle) {
     document.body.innerHTML = '<p class="error" style="display:block">Se requiere HTTPS.</p>';
-    return;
-  }
-
-  if (!ENCRYPTED_BLOB || location.hash === '#setup') {
-    hide('lock-screen'); show('setup-screen');
-    $('genBtn').addEventListener('click', generate);
     return;
   }
 
