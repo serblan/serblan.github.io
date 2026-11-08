@@ -1,236 +1,260 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBM - Selector de Acceso</title>
-    <style>
-        body {
-            background-color: #121212;
-            color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 360px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            text-align: center;
-            align-items: center;
-        }
-        h2 {
-            margin-bottom: 5px;
-            font-size: 1.5rem;
-            color: #58a6ff;
-        }
-        p {
-            color: #8b949e;
-            font-size: 0.9rem;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        .btn {
-            background: #161b22;
-            color: #fff;
-            border: 1px solid #30363d;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .btn:hover {
-            background: #1f6feb;
-            border-color: #388bfd;
-            transform: translateY(-2px);
-        }
-        .btn-local {
-            border-color: #238636;
-        }
-        .btn-local:hover {
-            background: #2ea043;
-            border-color: #3fb950;
-        }
-        .btn-back {
-            background: transparent;
-            border: 1px solid #30363d;
-            color: #8b949e;
-            font-size: 0.9rem;
-            padding: 10px 14px;
-            margin-top: 10px;
-        }
-        .btn-back:hover {
-            background: #21262d;
-            color: #fff;
-            transform: none;
-        }
-        /* Tamaño mediano para las imágenes del submenú */
-        .menu-icon-only {
-            width: 64px;
-            height: 64px;
-            object-fit: contain;
-        }
-        #pin-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #121212;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-        input[type="password"], input.pin-input {
-            background: #0d1117;
-            border: 1px solid #30363d;
-            color: #fff;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1.4rem;
-            text-align: center;
-            width: 200px;
-            outline: none;
-            margin-bottom: 15px;
-            letter-spacing: 8px;
-        }
-        input[type="password"]:focus, input.pin-input:focus {
-            border-color: #58a6ff;
-        }
-        .error {
-            color: #f85149;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-            display: none;
-        }
-        .hidden {
-            display: none !important;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none';">
+<title>SBM - Selector de Acceso</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    background: #121212; color: #fff; margin: 0; min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .container {
+    width: 90%; max-width: 360px; display: flex; flex-direction: column;
+    gap: 15px; text-align: center; align-items: center;
+  }
+  h2 { margin: 0 0 10px; font-size: 1.5rem; color: #58a6ff; }
+  p { color: #8b949e; font-size: .9rem; margin: 0 0 20px; }
+  .btn {
+    background: #161b22; color: #fff; border: 1px solid #30363d; padding: 16px;
+    border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+    transition: all .2s ease; display: flex; align-items: center; justify-content: center;
+    gap: 10px; width: 100%;
+  }
+  .btn:hover:not(:disabled) { background: #1f6feb; border-color: #388bfd; transform: translateY(-2px); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-local { border-color: #238636; }
+  .btn-local:hover:not(:disabled) { background: #2ea043; border-color: #3fb950; }
+  input, textarea {
+    background: #0d1117; border: 1px solid #30363d; color: #fff; padding: 12px;
+    border-radius: 8px; font-size: 1rem; width: 100%; outline: none; font-family: inherit;
+  }
+  input:focus, textarea:focus { border-color: #58a6ff; }
+  textarea { font-family: ui-monospace, monospace; font-size: .75rem; height: 140px; resize: vertical; }
+  .error { color: #f85149; font-size: .85rem; min-height: 1.2em; margin: 0; }
+  .ok { color: #3fb950; font-size: .85rem; }
+  .hidden { display: none !important; }
+  label { align-self: flex-start; font-size: .8rem; color: #8b949e; }
+</style>
 </head>
 <body>
 
-    <!-- Capa de bloqueo por PIN -->
-    <div id="pin-overlay">
-        <div class="container">
-            <h2>Acceso Restringido</h2>
-            <p>Introduce tu PIN numérico:</p>
-            <input type="password" inputmode="numeric" pattern="[0-9]*" id="pinInput" placeholder="••••" maxlength="8" autofocus>
-            <div id="errorMsg" class="error">PIN incorrecto</div>
-            <button class="btn" onclick="verifyPin()">Desbloquear</button>
-        </div>
-    </div>
+<!-- Pantalla de bloqueo -->
+<div class="container" id="lock-screen">
+  <h2>Acceso Restringido</h2>
+  <p>Introduce tu contraseña:</p>
+  <input type="password" id="pwd" autocomplete="current-password" autofocus>
+  <p class="error" id="errorMsg"></p>
+  <button class="btn" id="unlockBtn">Desbloquear</button>
+</div>
 
-    <!-- Contenido principal: Selección de Ubicación -->
-    <div class="container hidden" id="main-content">
-        <h2>SBM Gateway</h2>
-        <p>Selecciona tu ubicación actual:</p>
+<!-- Modo configuración (primer uso o #setup): genera el bloque cifrado -->
+<div class="container hidden" id="setup-screen">
+  <h2>Configuración inicial</h2>
+  <p>Genera el bloque cifrado y pégalo en la constante <code>ENCRYPTED_BLOB</code>.</p>
+  <label>Contraseña (mín. 12 caracteres, mejor una frase)</label>
+  <input type="password" id="s-pwd" autocomplete="new-password">
+  <label>Repite la contraseña</label>
+  <input type="password" id="s-pwd2" autocomplete="new-password">
+  <label>URL local</label>
+  <input type="url" id="s-local" placeholder="http://192.168.x.x:5080/">
+  <label>URL remota</label>
+  <input type="url" id="s-remote" placeholder="http://host.ts.net:5080/">
+  <p class="error" id="s-err"></p>
+  <button class="btn" id="genBtn">Generar bloque cifrado</button>
+  <textarea id="s-out" class="hidden" readonly></textarea>
+</div>
 
-        <button class="btn btn-local" onclick="selectMode('local')">
-            🏠 En Casa (Local)
-        </button>
+<!-- Menú de ubicación -->
+<div class="container hidden" id="main-content">
+  <h2>SBM Gateway</h2>
+  <p>Selecciona tu ubicación actual:</p>
+  <button class="btn btn-local" data-loc="local">🏠 En Casa (Local)</button>
+  <button class="btn" data-loc="remote">🌍 Fuera de Casa (Remoto)</button>
+  <button class="btn" id="logoutBtn">🔒 Cerrar sesión</button>
+</div>
 
-        <button class="btn" onclick="selectMode('remote')">
-            🌍 Fuera de Casa (Remoto)
-        </button>
-    </div>
+<!-- Menú de servicios -->
+<div class="container hidden" id="services-content">
+  <h2>Servicios disponibles</h2>
+  <p id="location-indicator"></p>
+  <button class="btn" data-svc="iptv">📺 IPTV</button>
+  <button class="btn" data-svc="galenas">💾 GaleNAS</button>
+  <button class="btn" data-svc="tvoptimizer">⚙️ TV Optimizer</button>
+  <button class="btn" id="backBtn">⬅️ Cambiar ubicación</button>
+</div>
 
-    <!-- Submenú de Servicios (Solo Imágenes Medianas) -->
-    <div class="container hidden" id="services-submenu">
-        <h2 id="submenu-title">Servicios</h2>
-        <p>Selecciona la aplicación:</p>
+<script>
+(() => {
+  'use strict';
 
-        <a href="#" id="btnIPTV" class="btn">
-            <img src="./img/iptv.png" alt="IPTV" class="menu-icon-only">
-        </a>
+  // ───────────── CONFIGURACIÓN ─────────────
+  // Se rellena con el bloque generado en el modo configuración (index.html#setup).
+  // Contiene SOLO texto cifrado: sin la contraseña no revela nada.
+  const ENCRYPTED_BLOB = "CXvKCzFwofCaZk3+Ss43oW5OG0JvqWOPUtiLkEc9x+1kEIIEiLOG0WOPvOXhnNHPevwp8/CrAou6wY2pdPvhxwgZQ/ZLzbbvwCxKv1yqVgDWZL09Gnky48fX3jpAGUfBN4OPTny7zZNiGCn6JS4VyTArzFVEsU3TnwgL";
 
-        <a href="#" id="btnGaleNAS" class="btn">
-            <img src="./img/galenas.png" alt="GaleNAS" class="menu-icon-only">
-        </a>
+  const PBKDF2_ITERATIONS = 600000;   // coste de fuerza bruta por intento
+  const SESSION_TTL_MS    = 15 * 60 * 1000;
+  const SESSION_KEY       = 'sbm_session';
+  const FAIL_KEY          = 'sbm_fails';
+  const PORTS = { iptv: '', galenas: '5080', tvoptimizer: '8090' };
 
-        <a href="#" id="btnTVOptimizer" class="btn">
-            <img src="./img/cleaner.png" alt="TV Optimizer" class="menu-icon-only">
-        </a>
+  // ───────────── UTILIDADES ─────────────
+  const $ = id => document.getElementById(id);
+  const enc = new TextEncoder(), dec = new TextDecoder();
+  const toB64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+  const fromB64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const show = id => $(id).classList.remove('hidden');
+  const hide = id => $(id).classList.add('hidden');
 
-        <button class="btn btn-back" onclick="goBack()">
-            ← Cambiar ubicación
-        </button>
-    </div>
+  async function deriveKey(password, salt, usages) {
+    const base = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, false, usages);
+  }
 
-    <script>
-        const CORRECT_HASH = "4127bccc19dff8f72c5914cda39b6f6817aee3c5653c680837321e5406decabb";
+  async function encryptPayload(password, obj) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(password, salt, ['encrypt']);
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(obj)));
+    const out = new Uint8Array(16 + 12 + ct.byteLength);
+    out.set(salt, 0); out.set(iv, 16); out.set(new Uint8Array(ct), 28);
+    return toB64(out);
+  }
 
-        // URLs Base en Base64
-        const ENC_LOCAL = "aHR0cDovLzE5Mi4xNjguMTAuMTU5OjUwODAv";
-        const ENC_REMOTE = "aHR0cDovL251YmVzYm0udGFpbDljY2YzNy50cy5uZXQ6NTA4MC8=";
+  async function decryptPayload(password, blob) {
+    const raw = fromB64(blob);
+    const key = await deriveKey(password, raw.slice(0, 16), ['decrypt']);
+    // AES-GCM autentica: con contraseña incorrecta lanza excepción
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: raw.slice(16, 28) }, key, raw.slice(28));
+    return JSON.parse(dec.decode(pt));
+  }
 
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+  // ───────────── LÍMITE DE INTENTOS (disuasorio) ─────────────
+  function getFails() {
+    try { return JSON.parse(localStorage.getItem(FAIL_KEY)) || { n: 0, until: 0 }; }
+    catch { return { n: 0, until: 0 }; }
+  }
+  function setFails(f) { try { localStorage.setItem(FAIL_KEY, JSON.stringify(f)); } catch {} }
 
-        async function verifyPin() {
-            const inputVal = document.getElementById("pinInput").value;
-            const inputHash = await sha256(inputVal);
+  // ───────────── ESTADO ─────────────
+  let payload = null;      // { local, remote } — solo en memoria tras descifrar
+  let location_ = null;
 
-            if (inputHash === CORRECT_HASH) {
-                document.getElementById("pin-overlay").classList.add("hidden");
-                document.getElementById("main-content").classList.remove("hidden");
-            } else {
-                document.getElementById("errorMsg").style.display = "block";
-                document.getElementById("pinInput").value = "";
-            }
-        }
+  function startSession(p) {
+    payload = p;
+    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ exp: Date.now() + SESSION_TTL_MS, p })); } catch {}
+    hide('lock-screen'); show('main-content');
+  }
 
-        document.getElementById("pinInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                verifyPin();
-            }
-        });
+  function endSession() {
+    payload = null; location_ = null;
+    try { sessionStorage.removeItem(SESSION_KEY); } catch {}
+    hide('main-content'); hide('services-content'); show('lock-screen');
+    $('pwd').value = ''; $('pwd').focus();
+  }
 
-        function selectMode(mode) {
-            const rawUrl = atob(mode === 'local' ? ENC_LOCAL : ENC_REMOTE);
-            
-            // IPTV (Sin puerto)
-            const urlIPTV = new URL(rawUrl);
-            urlIPTV.port = "";
-            document.getElementById("btnIPTV").href = urlIPTV.toString();
+  function restoreSession() {
+    try {
+      const s = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+      if (s && s.exp > Date.now() && s.p && s.p.local && s.p.remote) { startSession(s.p); return true; }
+      sessionStorage.removeItem(SESSION_KEY);
+    } catch {}
+    return false;
+  }
 
-            // GaleNAS (Puerto 5080)
-            const urlGaleNAS = new URL(rawUrl);
-            urlGaleNAS.port = "5080";
-            document.getElementById("btnGaleNAS").href = urlGaleNAS.toString();
+  // ───────────── DESBLOQUEO ─────────────
+  async function unlock() {
+    const err = $('errorMsg'), btn = $('unlockBtn');
+    const f = getFails();
+    if (Date.now() < f.until) {
+      err.textContent = `Demasiados intentos. Espera ${Math.ceil((f.until - Date.now()) / 1000)} s.`;
+      return;
+    }
+    const pwd = $('pwd').value;
+    if (!pwd) return;
+    btn.disabled = true; err.textContent = 'Verificando…';
+    try {
+      const p = await decryptPayload(pwd, ENCRYPTED_BLOB);
+      setFails({ n: 0, until: 0 });
+      err.textContent = '';
+      $('pwd').value = '';
+      startSession(p);
+    } catch {
+      const n = f.n + 1;
+      const wait = n >= 3 ? Math.min(2 ** (n - 3) * 5000, 15 * 60 * 1000) : 0;
+      setFails({ n, until: Date.now() + wait });
+      err.textContent = wait ? `Contraseña incorrecta. Bloqueado ${Math.ceil(wait / 1000)} s.` : 'Contraseña incorrecta.';
+      $('pwd').value = '';
+    } finally {
+      btn.disabled = false;
+    }
+  }
 
-            // TV Optimizer (Puerto 8090)
-            const urlTVOptimizer = new URL(rawUrl);
-            urlTVOptimizer.port = "8090";
-            document.getElementById("btnTVOptimizer").href = urlTVOptimizer.toString();
+  // ───────────── NAVEGACIÓN ─────────────
+  function selectLocation(type) {
+    location_ = type;
+    hide('main-content'); show('services-content');
+    $('location-indicator').textContent = type === 'local'
+      ? 'Conectando desde Casa (Local)' : 'Conectando desde Fuera de Casa (Remoto)';
+  }
 
-            // Actualizar vista
-            document.getElementById("submenu-title").innerText = mode === 'local' ? '🏠 Modo Local' : '🌍 Modo Remoto';
-            document.getElementById("main-content").classList.add("hidden");
-            document.getElementById("services-submenu").classList.remove("hidden");
-        }
+  function navigateTo(service) {
+    if (!payload || !location_ || !(service in PORTS)) return;
+    let u;
+    try { u = new URL(payload[location_]); } catch { return; }
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return;
+    u.port = PORTS[service];
+    window.location.href = u.toString();
+  }
 
-        function goBack() {
-            document.getElementById("services-submenu").classList.add("hidden");
-            document.getElementById("main-content").classList.remove("hidden");
-        }
-    </script>
+  // ───────────── MODO CONFIGURACIÓN ─────────────
+  async function generate() {
+    const err = $('s-err'), out = $('s-out');
+    const pwd = $('s-pwd').value, pwd2 = $('s-pwd2').value;
+    const local = $('s-local').value.trim(), remote = $('s-remote').value.trim();
+    err.textContent = ''; out.classList.add('hidden');
+    if (pwd.length < 12) { err.textContent = 'La contraseña debe tener al menos 12 caracteres.'; return; }
+    if (pwd !== pwd2) { err.textContent = 'Las contraseñas no coinciden.'; return; }
+    try { new URL(local); new URL(remote); } catch { err.textContent = 'URLs no válidas.'; return; }
+    $('genBtn').disabled = true; err.textContent = 'Generando…';
+    try {
+      const blob = await encryptPayload(pwd, { local, remote });
+      out.value = `const ENCRYPTED_BLOB = "${blob}";`;
+      out.classList.remove('hidden');
+      err.innerHTML = '<span class="ok">Listo. Copia esta línea sustituyendo la constante vacía.</span>';
+    } finally { $('genBtn').disabled = false; }
+  }
+
+  // ───────────── ARRANQUE ─────────────
+  if (!window.isSecureContext || !crypto.subtle) {
+    document.body.innerHTML = '<p class="error" style="display:block">Se requiere HTTPS.</p>';
+    return;
+  }
+
+  if (!ENCRYPTED_BLOB || location.hash === '#setup') {
+    hide('lock-screen'); show('setup-screen');
+    $('genBtn').addEventListener('click', generate);
+    return;
+  }
+
+  $('unlockBtn').addEventListener('click', unlock);
+  $('pwd').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+  $('logoutBtn').addEventListener('click', endSession);
+  $('backBtn').addEventListener('click', () => { location_ = null; hide('services-content'); show('main-content'); });
+  document.querySelectorAll('[data-loc]').forEach(b => b.addEventListener('click', () => selectLocation(b.dataset.loc)));
+  document.querySelectorAll('[data-svc]').forEach(b => b.addEventListener('click', () => navigateTo(b.dataset.svc)));
+
+  restoreSession();
+})();
+</script>
 </body>
 </html>
